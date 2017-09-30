@@ -223,8 +223,13 @@ public class NewDish extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        NewDish.this.finish();
-        startActivity(new Intent(NewDish.this, MainActivity.class));
+        if(!editingMode){
+            NewDish.this.finish();
+            startActivity(new Intent(NewDish.this, MainActivity.class));
+        } else {
+            super.onBackPressed();
+        }
+
     }
 
     public void deleteDish(View v) throws IOException {
@@ -234,7 +239,7 @@ public class NewDish extends AppCompatActivity {
                 switch (which){
                     case DialogInterface.BUTTON_POSITIVE:
                         dbHandler.deleteDish(dbHandler.getName(editingId));
-                        startActivity(new Intent(NewDish.this, Recipes.class));
+                        startActivity(new Intent(NewDish.this, RecipeActivity.class));
                         break;
 
                     case DialogInterface.BUTTON_NEGATIVE:
@@ -310,14 +315,14 @@ public class NewDish extends AppCompatActivity {
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     NewDish.this.finish();
-                                    startActivityForResult(new Intent(NewDish.this, Recipes.class), 0);
+                                    startActivityForResult(new Intent(NewDish.this, RecipeActivity.class), 0);
                                 }
                             });
                     alertDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
                         @Override
                         public void onCancel(DialogInterface dialog) {
                             NewDish.this.finish();
-                            startActivityForResult(new Intent(NewDish.this, Recipes.class), 0);
+                            startActivityForResult(new Intent(NewDish.this, RecipeActivity.class), 0);
                         }
                     });
                     alertDialog.show();

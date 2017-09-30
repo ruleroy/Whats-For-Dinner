@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         recipes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, Recipes.class));
+                startActivity(new Intent(MainActivity.this, RecipeActivity.class));
             }
         });
 

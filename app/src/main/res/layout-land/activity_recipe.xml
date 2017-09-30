@@ -1,14 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="horizontal" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <fragment
-        android:id="@+id/fragment"
-        android:name="com.vannakittikun.whatsfordinner.FragmentRecipe"
+        android:id="@+id/fragment2"
+        android:name="com.vannakittikun.whatsfordinner.Recipes2"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:layout="@layout/fragment_recipe" />
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        tools:layout="@layout/fragment_recipes2" />
+
+    <Button
+        android:id="@+id/buttonHide"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="20dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0"
+        android:background="?attr/selectableItemBackground"
+        android:fontFamily="serif"
+        android:onClick="hideFrag"
+        android:text=">"
+        android:paddingLeft="7dp"
+        android:textSize="30sp" />
+
+    <fragment
+        android:id="@+id/fragment"
+        android:name="com.vannakittikun.whatsfordinner.Recipes"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        tools:layout="@layout/fragment_recipes" />
 
 </LinearLayout>

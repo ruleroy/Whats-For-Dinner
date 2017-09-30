@@ -34,7 +34,7 @@
 
         </activity>
 
-        <activity android:name=".Recipes"
+        <activity android:name=".RecipeActivity"
             android:label="Recipes"
             android:theme="@style/AppTheme"
             android:parentActivityName=".MainActivity">

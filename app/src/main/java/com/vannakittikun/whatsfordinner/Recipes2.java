@@ -14,18 +14,18 @@ import android.widget.TextView;
  * Created by Rule on 9/29/2017.
  */
 
-public class FragmentRecipe2 extends Fragment {
+public class Recipes2 extends Fragment {
     TextView text;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view=inflater.inflate(R.layout.fragment_recipe, container, false);
-        text = view.findViewById(R.id.textView6);
+        View view=inflater.inflate(R.layout.fragment_recipes2, container, false);
+        //text = view.findViewById(R.id.textView6);
 
         return view;
     }
 
     public void changeData(){
-        text.setText("fdasfads sdga sg asd");
+        //text.setText("fdasfads sdga sg asd");
     }
 }

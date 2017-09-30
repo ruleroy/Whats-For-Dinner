@@ -5,9 +5,9 @@
     android:layout_height="match_parent">
 
     <fragment
-        android:id="@+id/fragment3"
-        android:name="com.vannakittikun.whatsfordinner.FragmentRecipe"
+        android:id="@+id/fragment"
+        android:name="com.vannakittikun.whatsfordinner.Recipes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:layout="@layout/fragment_recipe" />
+        tools:layout="@layout/fragment_recipes" />
 </LinearLayout>

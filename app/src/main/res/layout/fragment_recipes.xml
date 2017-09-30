@@ -60,7 +60,6 @@
             android:layout_height="wrap_content"
             android:background="@color/light"
             android:foreground="?attr/selectableItemBackground"
-            android:onClick="startNewDish"
             android:text="Add New dish"
             android:visibility="visible" />
 

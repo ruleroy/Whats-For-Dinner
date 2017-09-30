@@ -54,7 +54,7 @@
                 android:layout_marginTop="16dp"
                 android:layout_weight="1"
                 android:ems="10"
-                android:maxLength="36"
+                android:maxLength="30"
                 android:hint="Recipe Name"
                 android:inputType="textCapWords"
                 android:textStyle="bold" />
