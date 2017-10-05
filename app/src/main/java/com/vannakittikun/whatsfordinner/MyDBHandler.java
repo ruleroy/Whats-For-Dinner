@@ -17,6 +17,7 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+
 import android.database.MatrixCursor;
 
 /**
@@ -25,16 +26,20 @@ import android.database.MatrixCursor;
 
 public class MyDBHandler extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 7;
+    private static final int DATABASE_VERSION = 8;
     private static final String DATABASE_NAME = "dishesdb";
 
     public static final String TABLE_DISHES = "dishes";
+    public static final String TABLE_GROCERIES = "groceries";
 
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_NAME = "dishName";
     public static final String COLUMN_DIRECTIONS = "dishDirections";
     public static final String COLUMN_INGREDIENTS = "dishIngredients";
     public static final String COLUMN_IMAGE = "dishImage";
+
+    public static final String GRO_NAME = "groName";
+    public static final String GRO_AMOUNT = "groAmount";
 
     public MyDBHandler(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, DATABASE_NAME, factory, DATABASE_VERSION);
@@ -54,12 +59,66 @@ public class MyDBHandler extends SQLiteOpenHelper {
                 COLUMN_IMAGE + " BLOB" +
                 ");";
         sqLiteDatabase.execSQL(query);
+
+        String query2 = "CREATE TABLE " + TABLE_GROCERIES + "(" +
+                COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                GRO_NAME + " TEXT," +
+                GRO_AMOUNT + " INTEGER" +
+                ");";
+        sqLiteDatabase.execSQL(query2);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_DISHES);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_GROCERIES);
         onCreate(sqLiteDatabase);
+    }
+
+    public void addToGroceries(Dish dish) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        for (int i = 0; i < dish.getIngredients().size(); i++) {
+            if (!ingredientExists(dish.getIngredients().get(i))) {
+                values.put(GRO_NAME, dish.getIngredients().get(i));
+                values.put(GRO_AMOUNT, 1);
+                db.insert(TABLE_GROCERIES, null, values);
+                values.clear();
+            } else {
+                values.put(GRO_AMOUNT, getGroceriesAmt(dish.getIngredients().get(i)) + 1);
+                db.update(TABLE_GROCERIES, values, "_id=" + this.getIdGroceries(dish.getIngredients().get(i)), null);
+                values.clear();
+            }
+        }
+        db.close();
+    }
+
+    public void subtractIngredient(String ingredient) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        if(getGroceriesAmt(ingredient) == 0){
+
+        } else {
+            values.put(GRO_AMOUNT, getGroceriesAmt(ingredient) - 1);
+            db.update(TABLE_GROCERIES, values, "_id=" + this.getIdGroceries(ingredient), null);
+        }
+        db.close();
+    }
+
+    public void addIngredient(String ingredient) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(GRO_NAME, ingredient);
+        values.put(GRO_AMOUNT, getGroceriesAmt(ingredient) + 1);
+
+        if (ingredientExists(ingredient)) {
+            db.update(TABLE_GROCERIES, values, "_id=" + this.getIdGroceries(ingredient), null);
+        } else {
+            db.insert(TABLE_GROCERIES, null, values);
+        }
+
+        db.close();
     }
 
     public void addDish(Dish dish) throws IOException {
@@ -122,9 +181,26 @@ public class MyDBHandler extends SQLiteOpenHelper {
         db.execSQL("DELETE FROM " + TABLE_DISHES + " WHERE " + COLUMN_NAME + "=\"" + dishName + "\";");
     }
 
+    public void deleteIngredient(String ingredient) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL("DELETE FROM " + TABLE_GROCERIES + " WHERE " + GRO_NAME + "=\"" + ingredient + "\";");
+    }
+
     public boolean nameExists(String dishName) {
         SQLiteDatabase db = getWritableDatabase();
         String Query = "SELECT * FROM " + TABLE_DISHES + " WHERE " + COLUMN_NAME + "=\"" + dishName + "\";";
+        Cursor cursor = db.rawQuery(Query, null);
+        if (cursor.getCount() <= 0) {
+            cursor.close();
+            return false;
+        }
+        cursor.close();
+        return true;
+    }
+
+    public boolean ingredientExists(String ingredientName) {
+        SQLiteDatabase db = getWritableDatabase();
+        String Query = "SELECT * FROM " + TABLE_GROCERIES + " WHERE " + GRO_NAME + "=\"" + ingredientName + "\";";
         Cursor cursor = db.rawQuery(Query, null);
         if (cursor.getCount() <= 0) {
             cursor.close();
@@ -149,12 +225,43 @@ public class MyDBHandler extends SQLiteOpenHelper {
         }
     }
 
+    public int getGroceriesAmt(String ingredientName) {
+        SQLiteDatabase db = getWritableDatabase();
+        String Query = "SELECT * FROM " + TABLE_GROCERIES + " WHERE " + GRO_NAME + "=\"" + ingredientName + "\";";
+        Cursor c = db.rawQuery(Query, null);
+        c.moveToFirst();
+        if (c.getCount() <= 0) {
+            c.close();
+            return -1;
+        } else {
+            int amt = c.getInt(c.getColumnIndex("groAmount"));
+            c.close();
+            return amt;
+        }
+    }
+
+    public int getIdGroceries(String ingredientName) {
+        SQLiteDatabase db = getWritableDatabase();
+        String Query = "SELECT * FROM " + TABLE_GROCERIES + " WHERE " + GRO_NAME + "=\"" + ingredientName + "\";";
+        Cursor c = db.rawQuery(Query, null);
+        c.moveToFirst();
+        if (c.getCount() <= 0) {
+            c.close();
+            return -1;
+        } else {
+            int id = c.getInt(c.getColumnIndex("_id"));
+            c.close();
+            return id;
+        }
+    }
+
     public String getName(int id) {
         SQLiteDatabase db = getWritableDatabase();
         String Query = "SELECT * FROM " + TABLE_DISHES + " WHERE " + COLUMN_ID + "=\"" + id + "\";";
         Cursor c = db.rawQuery(Query, null);
         c.moveToFirst();
         String name = c.getString(c.getColumnIndex("dishName"));
+        db.close();
         return name;
     }
 
@@ -163,6 +270,15 @@ public class MyDBHandler extends SQLiteOpenHelper {
         String Query = "DELETE FROM sqlite_sequence WHERE NAME='" + TABLE_DISHES + "';";
         db.delete(TABLE_DISHES, null, null);
         db.execSQL(Query);
+        db.close();
+    }
+
+    public void removeAllIngredients() {
+        SQLiteDatabase db = getWritableDatabase(); // helper is object extends SQLiteOpenHelper
+        String Query = "DELETE FROM sqlite_sequence WHERE NAME='" + TABLE_GROCERIES + "';";
+        db.delete(TABLE_GROCERIES, null, null);
+        db.execSQL(Query);
+        db.close();
     }
 
     public String databaseToString() {
@@ -213,6 +329,38 @@ public class MyDBHandler extends SQLiteOpenHelper {
         db.close();
         c.close();
         return names;
+    }
+
+    public ArrayList<String> getListIngredients() {
+        ArrayList<String> names = new ArrayList<String>();
+        SQLiteDatabase db = getWritableDatabase();
+        String query = "SELECT * FROM " + TABLE_GROCERIES + " WHERE 1;";
+
+        Cursor c = db.rawQuery(query, null);
+        c.moveToFirst();
+        //names.add(c.getString(c.getColumnIndex("dishName")));
+
+        while (!c.isAfterLast()) {
+            if (c.getString(c.getColumnIndex("_id")) != null) {
+                names.add(c.getString(c.getColumnIndex("groName")));
+            }
+            c.moveToNext();
+        }
+
+        db.close();
+        c.close();
+        return names;
+    }
+
+    public int getCountIngredient(String ingredient) {
+        SQLiteDatabase db = getWritableDatabase();
+        String Query = "SELECT * FROM " + TABLE_GROCERIES + " WHERE " + GRO_NAME + "=\"" + ingredient + "\";";
+        Cursor c = db.rawQuery(Query, null);
+        c.moveToFirst();
+        int amt = c.getInt(c.getColumnIndex("groAmount"));
+        db.close();
+        c.close();
+        return amt;
     }
 
     public int getCountRecipes() {
@@ -280,46 +428,46 @@ public class MyDBHandler extends SQLiteOpenHelper {
         return newDish;
     }
 
-    public ArrayList<Cursor> getData(String Query){
+    public ArrayList<Cursor> getData(String Query) {
         //get writable database
         SQLiteDatabase sqlDB = this.getWritableDatabase();
-        String[] columns = new String[] { "message" };
+        String[] columns = new String[]{"message"};
         //an array list of cursor to save two cursors one has results from the query
         //other cursor stores error message if any errors are triggered
         ArrayList<Cursor> alc = new ArrayList<Cursor>(2);
-        MatrixCursor Cursor2= new MatrixCursor(columns);
+        MatrixCursor Cursor2 = new MatrixCursor(columns);
         alc.add(null);
         alc.add(null);
 
-        try{
-            String maxQuery = Query ;
+        try {
+            String maxQuery = Query;
             //execute the query results will be save in Cursor c
             Cursor c = sqlDB.rawQuery(maxQuery, null);
 
             //add value to cursor2
-            Cursor2.addRow(new Object[] { "Success" });
+            Cursor2.addRow(new Object[]{"Success"});
 
-            alc.set(1,Cursor2);
+            alc.set(1, Cursor2);
             if (null != c && c.getCount() > 0) {
 
-                alc.set(0,c);
+                alc.set(0, c);
                 c.moveToFirst();
 
-                return alc ;
+                return alc;
             }
             return alc;
-        } catch(SQLException sqlEx){
+        } catch (SQLException sqlEx) {
             Log.d("printing exception", sqlEx.getMessage());
             //if any exceptions are triggered save the error message to cursor an return the arraylist
-            Cursor2.addRow(new Object[] { ""+sqlEx.getMessage() });
-            alc.set(1,Cursor2);
+            Cursor2.addRow(new Object[]{"" + sqlEx.getMessage()});
+            alc.set(1, Cursor2);
             return alc;
-        } catch(Exception ex){
+        } catch (Exception ex) {
             Log.d("printing exception", ex.getMessage());
 
             //if any exceptions are triggered save the error message to cursor an return the arraylist
-            Cursor2.addRow(new Object[] { ""+ex.getMessage() });
-            alc.set(1,Cursor2);
+            Cursor2.addRow(new Object[]{"" + ex.getMessage()});
+            alc.set(1, Cursor2);
             return alc;
         }
     }

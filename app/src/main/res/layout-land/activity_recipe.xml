@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal" android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -9,28 +10,37 @@
         android:name="com.vannakittikun.whatsfordinner.Recipes2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"
         tools:layout="@layout/fragment_recipes2" />
 
-    <Button
-        android:id="@+id/buttonHide"
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:layout_width="20dp"
-        android:layout_height="match_parent"
-        android:layout_weight="0"
-        android:background="?attr/selectableItemBackground"
-        android:fontFamily="serif"
-        android:onClick="hideFrag"
-        android:text=">"
-        android:paddingLeft="7dp"
-        android:textSize="30sp" />
 
-    <fragment
-        android:id="@+id/fragment"
-        android:name="com.vannakittikun.whatsfordinner.Recipes"
-        android:layout_width="match_parent"
+    <FrameLayout
+        android:id="@+id/fragmentContainer"
+        android:layout_width="350dp"
         android:layout_height="match_parent"
-        android:layout_weight="1"
-        tools:layout="@layout/fragment_recipes" />
+        android:layout_gravity="right"
+        android:background="@android:color/background_light"
+        android:elevation="10dp">
 
-</LinearLayout>
+        <FrameLayout
+            android:id="@+id/fragContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:background="@android:color/background_light"
+            android:paddingLeft="40dp"></FrameLayout>
+
+        <ImageButton
+            android:id="@+id/imageButton"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="left"
+            android:background="?android:attr/colorBackground"
+            android:foreground="?attr/selectableItemBackground"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/rightarrow" />
+
+
+    </FrameLayout>
+
+
+</FrameLayout>

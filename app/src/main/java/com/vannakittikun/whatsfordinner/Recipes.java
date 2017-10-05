@@ -1,6 +1,8 @@
 package com.vannakittikun.whatsfordinner;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -8,8 +10,10 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -30,6 +34,7 @@ import org.json.JSONException;
  */
 
 public class Recipes extends Fragment {
+    private FragmentManager manager;
     public LinearLayout parentLinearLayout;
     private LinearLayout parent;
     private ScrollView scrollv;
@@ -60,6 +65,7 @@ public class Recipes extends Fragment {
         mealPlanOptions = new Meal();
         editTools = (LinearLayout) view.findViewById(R.id.editTools);
         editTools2 = (LinearLayout) view.findViewById(R.id.recipeLinearLayout);
+        manager = getFragmentManager();
 
         edit = false;
 
@@ -91,8 +97,8 @@ public class Recipes extends Fragment {
 
 
     public void onBackPressed() {
-        getActivity().finish();
-        startActivity(new Intent(getActivity(), MainActivity.class));
+            getActivity().finish();
+            startActivity(new Intent(getActivity(), MainActivity.class));
     }
 
 
@@ -220,6 +226,15 @@ public class Recipes extends Fragment {
             LinearLayout layout = (LinearLayout) rowView.findViewById(R.id.editTools);
             layout.setTag(i);
             btn.setText(dbHandler.getListNames().get(i));
+            btn.setTag(dbHandler.getListNames().get(i));
+
+            btn.setOnClickListener(new View.OnClickListener(){
+
+                @Override
+                public void onClick(View view) {
+                    onViewRecipe(view);
+                }
+            });
 
             btn.setOnLongClickListener(new View.OnLongClickListener(){
 
@@ -276,8 +291,10 @@ public class Recipes extends Fragment {
         LinearLayout parent = (LinearLayout) v.getParent();
         Button recipeBtn = (Button) parent.findViewById(R.id.btnRecipeName);
         String recName = recipeBtn.getText().toString();
+        Dish dish = dbHandler.dbToObject(dbHandler.getId(recName));
 
         mealPlanOptions.addDishToMeal(recName);
+        dbHandler.addToGroceries(dish);
 
         Context context = getActivity().getApplicationContext();
         CharSequence text = "Added " + recipeBtn.getText().toString() + " to meal plan options. " + "(" + mealPlanOptions.getDishAmt(recName) + ")";
@@ -339,6 +356,43 @@ public class Recipes extends Fragment {
         intent.putExtra("EDIT_RECIPE_ID", editId);
         intent.putExtra("EDITING_MODE", true);
         startActivityForResult(intent, 0);
+    }
+
+    public void onViewRecipe(View v) {
+        //View parent = (View) v.getParent();
+        LinearLayout parent = (LinearLayout) v.getParent();
+        Button recipeBtn = (Button) parent.findViewById(R.id.btnRecipeName);
+
+        editId = dbHandler.getId(recipeBtn.getText().toString());
+
+        if(getRotation(getActivity().getApplicationContext()).equals("landscape") || getRotation(getActivity().getApplicationContext()).equals("reverse landscape")){
+            Recipes2 recipeFrag = (Recipes2) manager.findFragmentById(R.id.fragment2);
+            try {
+                recipeFrag.updateData(dbHandler.dbToObject(editId));
+            }  catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        } else if(getRotation(getActivity().getApplicationContext()).equals("portrait") || getRotation(getActivity().getApplicationContext()).equals("reverse portrait")) {
+            Intent intent = new Intent(getActivity().getBaseContext(), RecipeViewActivity.class);
+            intent.putExtra("EDIT_RECIPE_ID", editId);
+            startActivityForResult(intent, 0);
+        }
+
+    }
+
+    public String getRotation(Context context){
+        final int rotation = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getOrientation();
+        switch (rotation) {
+            case Surface.ROTATION_0:
+                return "portrait";
+            case Surface.ROTATION_90:
+                return "landscape";
+            case Surface.ROTATION_180:
+                return "reverse portrait";
+            default:
+                return "reverse landscape";
+        }
     }
 
     public void onEditRecipeLongClick(View v){

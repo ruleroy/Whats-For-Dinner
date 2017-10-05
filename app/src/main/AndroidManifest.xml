@@ -34,6 +34,16 @@
 
         </activity>
 
+        <activity android:name=".GroceriesActivity"
+            android:label="Groceries"
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+
         <activity android:name=".RecipeActivity"
             android:label="Recipes"
             android:theme="@style/AppTheme"
@@ -41,6 +51,16 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
+        </activity>
+
+        <activity android:name=".RecipeViewActivity"
+            android:label="Recipes"
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".RecipeActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".RecipeActivity" />
         </activity>
 
         <activity android:name="com.soundcloud.android.crop.CropImageActivity" />

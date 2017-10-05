@@ -45,6 +45,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        ImageButton groceries = (ImageButton) findViewById(R.id.groceries);
+        groceries.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, GroceriesActivity.class));
+            }
+        });
+
     }
 
     @Override

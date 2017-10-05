@@ -232,6 +232,21 @@ public class NewDish extends AppCompatActivity {
 
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                if(!editingMode){
+                    NewDish.this.finish();
+                    startActivity(new Intent(NewDish.this, MainActivity.class));
+                } else {
+                    super.onBackPressed();
+                }
+                break;
+        }
+        return true;
+    }
+
     public void deleteDish(View v) throws IOException {
         DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
             @Override
