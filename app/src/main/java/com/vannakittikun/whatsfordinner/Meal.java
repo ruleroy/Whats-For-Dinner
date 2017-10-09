@@ -1,5 +1,7 @@
 package com.vannakittikun.whatsfordinner;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -9,6 +11,13 @@ import java.util.HashMap;
 
 public class Meal {
     private HashMap<String, Integer> dishes = new HashMap<String, Integer>();
+    private Context context;
+    MyDBHandler dbHandler;
+
+    public Meal(Context context){
+        this.context = context;
+        dbHandler = new MyDBHandler(context, null, null, 1);
+    }
 
     public void addDishToMeal(String dish){
         if(dishes.containsKey(dish)){
@@ -16,6 +25,7 @@ public class Meal {
         } else {
             this.dishes.put(dish, 1);
         }
+        dbHandler.addToMeal(dish);
     }
 
     public void removeDish(String dish){
@@ -33,6 +43,7 @@ public class Meal {
     }
 
     public int getDishAmt(String name){
-        return this.dishes.get(name);
+
+        return this.dbHandler.getMealsAmt(name);
     }
 }

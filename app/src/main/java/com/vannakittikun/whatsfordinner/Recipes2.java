@@ -58,6 +58,13 @@ public class Recipes2 extends Fragment {
             TextView title = (TextView) view.findViewById(R.id.title);
             title.setText(viewDish.getName());
 
+            TextView calories = (TextView) view.findViewById(R.id.calories);
+            if(viewDish.getCalories() == 0){
+                calories.setVisibility(View.GONE);
+            } else {
+                calories.setText(viewDish.getCalories() + " calories");
+            }
+
             TextView directions = (TextView) view.findViewById(R.id.directions);
             directions.setText(viewDish.getDirections());
 
@@ -102,6 +109,13 @@ public class Recipes2 extends Fragment {
 
         TextView title = (TextView) getView().findViewById(R.id.title);
         title.setText(dish.getName());
+
+        TextView calories = (TextView) getView().findViewById(R.id.calories);
+        if(dish.getCalories() == 0){
+            calories.setVisibility(View.GONE);
+        } else {
+            calories.setText(dish.getCalories() + " calories");
+        }
 
         TextView directions = (TextView) getView().findViewById(R.id.directions);
         directions.setText(dish.getDirections());

@@ -8,7 +8,7 @@
 
     <RelativeLayout
         android:id="@+id/ctrlAmtBtn"
-        android:layout_width="100dp"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/ingredientName"
         android:layout_alignParentEnd="true"
@@ -23,7 +23,7 @@
             android:id="@+id/add"
             android:layout_width="50dp"
             android:layout_height="match_parent"
-            android:background="?attr/colorButtonNormal"
+            android:background="#D9EDF7"
             android:foreground="?attr/selectableItemBackgroundBorderless"
             android:text="+"
             android:textSize="24sp" />
@@ -35,10 +35,22 @@
             android:layout_alignParentTop="true"
             android:layout_toEndOf="@+id/add"
             android:layout_toRightOf="@+id/add"
-            android:background="?attr/colorButtonNormal"
+            android:background="#D9EDF7"
             android:foreground="?attr/selectableItemBackgroundBorderless"
             android:text="−"
             android:textSize="24sp" />
+
+        <Button
+            android:id="@+id/delete"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@+id/subtract"
+            android:layout_toRightOf="@+id/subtract"
+            android:background="#D9EDF7"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:text="x"
+            android:textSize="18sp" />
 
     </RelativeLayout>
 

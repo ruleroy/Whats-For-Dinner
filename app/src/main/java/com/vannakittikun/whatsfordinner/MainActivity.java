@@ -20,11 +20,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                        Intent dbmanager = new Intent(MainActivity.this,AndroidDatabaseManager.class);
-                        startActivity(dbmanager);
+                        //Intent dbmanager = new Intent(MainActivity.this,AndroidDatabaseManager.class);
+                        //startActivity(dbmanager);
 
 
-                //startActivity(new Intent(MainActivity.this, Popup.class));
+                startActivity(new Intent(MainActivity.this, Popup.class));
             }
         });
 
@@ -34,6 +34,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, NewDish.class));
+            }
+        });
+
+        ImageButton meals = (ImageButton) findViewById(R.id.meals);
+        meals.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, MealsActivity.class));
             }
         });
 

@@ -18,6 +18,16 @@
         android:inputType="textCapSentences" />
 
     <ImageButton
+        android:id="@+id/dropdown"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginRight="16dp"
+        android:layout_weight="1"
+        android:background="?attr/selectableItemBackground"
+        android:scaleType="fitCenter"
+        app:srcCompat="@drawable/downarrow" />
+
+    <ImageButton
         android:id="@+id/delete_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

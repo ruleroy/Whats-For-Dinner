@@ -14,6 +14,7 @@ public class Dish {
     private String directions = "";
     private ArrayList<String> ingredients = new ArrayList<String>();
     private Bitmap image = null;
+    private int calories = 0;
 
     public void setId(int num) { this.id = num; }
 
@@ -33,6 +34,10 @@ public class Dish {
         this.image = bit;
     }
 
+    public void setCalories(int num){
+        this.calories = num;
+    }
+
     public int getId() { return this.id; }
 
     public String getName(){
@@ -49,5 +54,9 @@ public class Dish {
 
     public Bitmap getImage(){
         return this.image;
+    }
+
+    public int getCalories() {
+        return this.calories;
     }
 }

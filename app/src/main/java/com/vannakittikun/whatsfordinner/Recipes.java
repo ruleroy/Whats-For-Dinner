@@ -62,7 +62,7 @@ public class Recipes extends Fragment {
         getImg = (ImageView) view.findViewById(R.id.getImg);
         dbHandler = new MyDBHandler(getActivity(), null, null, 1);
         parentLinearLayout = (LinearLayout) view.findViewById(R.id.recipeLinearLayout);
-        mealPlanOptions = new Meal();
+        mealPlanOptions = new Meal(getActivity().getApplicationContext());
         editTools = (LinearLayout) view.findViewById(R.id.editTools);
         editTools2 = (LinearLayout) view.findViewById(R.id.recipeLinearLayout);
         manager = getFragmentManager();

@@ -59,6 +59,19 @@
                 android:inputType="textCapWords"
                 android:textStyle="bold" />
 
+            <EditText
+                android:id="@+id/recipeCalories"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_weight="1"
+                android:ems="10"
+                android:hint="Calories"
+                android:inputType="number"
+                android:maxLength="30" />
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -192,6 +205,8 @@
                 android:hint="Ingredient 1"
                 android:imeActionLabel="done"
                 android:inputType="textCapSentences" />
+
+
 
             <Button
                 android:id="@+id/addIngredient"

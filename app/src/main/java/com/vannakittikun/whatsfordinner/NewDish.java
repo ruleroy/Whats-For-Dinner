@@ -27,6 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -55,6 +56,7 @@ public class NewDish extends AppCompatActivity {
     private String strIngredientAmtFormat = null;
     private String strIngredientMsg = null;
     private EditText recipeName;
+    private EditText recipeCalories;
     private EditText recipeDescription;
     private boolean editingMode;
     private int editingId;
@@ -62,6 +64,8 @@ public class NewDish extends AppCompatActivity {
     private Button deleteDish;
     private boolean canSave = false;
     MyDBHandler dbHandler;
+    private ArrayList<String> ingredientsList;
+    private ArrayAdapter arrayAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +81,7 @@ public class NewDish extends AppCompatActivity {
         emptyLayout = (LinearLayout) findViewById(R.id.emptyLayout);
 
         recipeName = (EditText) findViewById(R.id.recipeName);
+        recipeCalories = (EditText) findViewById(R.id.recipeCalories);
         recipeDescription = (EditText) findViewById(R.id.directions);
         deleteDish = (Button) findViewById(R.id.deleteDish);
 
@@ -87,6 +92,13 @@ public class NewDish extends AppCompatActivity {
         editingId = getIntent().getIntExtra("EDIT_RECIPE_ID", 0);
         editingMode = getIntent().getBooleanExtra("EDITING_MODE", false);
         dbHandler = new MyDBHandler(this, null, null, 1);
+        final AutoCompleteTextView text1 = (AutoCompleteTextView) parentLinearLayout.getChildAt(0).findViewById(R.id.ingredient1);
+
+        try {
+            ingredientsList = dbHandler.getAllIngredients();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
@@ -100,7 +112,6 @@ public class NewDish extends AppCompatActivity {
             recipeName.setText(editingObj.getName());
             recipeDescription.setText(editingObj.getDirections());
 
-            AutoCompleteTextView text1 = (AutoCompleteTextView) parentLinearLayout.getChildAt(0).findViewById(R.id.ingredient1);
             if(editingObj.getIngredients().size() > 0){
                 text1.setText(editingObj.getIngredients().get(0));
             }
@@ -113,6 +124,26 @@ public class NewDish extends AppCompatActivity {
             newDishImg.setImageBitmap(editingObj.getImage());
             deleteDish.setVisibility(View.VISIBLE);
         }
+
+        arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, ingredientsList);
+        text1.setAdapter(arrayAdapter);
+        text1.setInputType(0);
+
+        text1.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    text1.showDropDown();
+                }
+            }
+        });
+        text1.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View view) {
+                text1.showDropDown();
+            }
+        });
 
         recipeName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -299,6 +330,11 @@ public class NewDish extends AppCompatActivity {
             newDish.setImage(newDishImg.getDrawingCache());
             newDish.setName(recipeName.getText().toString());
             newDish.setDirections(recipeDirections.getText().toString());
+            if(!recipeCalories.getText().toString().isEmpty()) {
+                newDish.setCalories(Integer.parseInt(recipeCalories.getText().toString()));
+            } else {
+                newDish.setCalories(0);
+            }
 
             if(!recipeIngredient1.getText().toString().equals("")) {
                 newDish.addIngredient(recipeIngredient1.getText().toString());
@@ -411,14 +447,37 @@ public class NewDish extends AppCompatActivity {
 
 
         parentLinearLayout.addView(rowView, parentLinearLayout.getChildCount() - 1);
-        AutoCompleteTextView text = (AutoCompleteTextView) rowView.findViewById(R.id.ingredient);
+        final AutoCompleteTextView text = (AutoCompleteTextView) rowView.findViewById(R.id.ingredient);
+        ImageButton dropdown = (ImageButton) rowView.findViewById(R.id.dropdown);
 
         text.setHint(strIngredientMsg);
+        text.setInputType(0);
+        text.setAdapter(arrayAdapter);
+        text.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus){
+                    text.showDropDown();
+                }
+            }
+        });
+
+        dropdown.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                arrayAdapter.getFilter().filter(null);
+                text.showDropDown();
+                text.requestFocus();
+            }
+        });
+
+
         if (ingredientAmt >= 10) {
             Button addI = (Button) findViewById(R.id.addIngredient);
             //addI.setEnabled(false);
             addI.setVisibility(View.GONE);
         }
+
         text.requestFocus();
     }
 
@@ -432,10 +491,31 @@ public class NewDish extends AppCompatActivity {
 
 
         parentLinearLayout.addView(rowView, parentLinearLayout.getChildCount() - 1);
-        AutoCompleteTextView text = (AutoCompleteTextView) rowView.findViewById(R.id.ingredient);
+        final AutoCompleteTextView text = (AutoCompleteTextView) rowView.findViewById(R.id.ingredient);
+        ImageButton dropdown = (ImageButton) rowView.findViewById(R.id.dropdown);
 
         text.setHint(strIngredientMsg);
         text.setText(ing);
+
+        text.setAdapter(arrayAdapter);
+        text.setInputType(0);
+        text.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    text.showDropDown();
+                }
+            }
+        });
+
+        dropdown.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View view) {
+                text.showDropDown();
+            }
+        });
+
         if (ingredientAmt >= 10) {
             Button addI = (Button) findViewById(R.id.addIngredient);
             //addI.setEnabled(false);

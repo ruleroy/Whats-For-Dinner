@@ -1,11 +1,15 @@
 package com.vannakittikun.whatsfordinner;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.provider.ContactsContract;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -14,6 +18,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,11 +51,13 @@ public class GroceriesAdapter extends ArrayAdapter<String> {
 
         final TextView name = (TextView) customView.findViewById(R.id.ingredientName);
         name.setText(singleFoodItem + " (" + amt + ")");
+        name.setTag(singleFoodItem);
         final ImageView arrow = (ImageView) customView.findViewById(R.id.arrow);
 
         final RelativeLayout ctrlAmtBtn = (RelativeLayout) customView.findViewById(R.id.ctrlAmtBtn);
         final Button add = (Button) ctrlAmtBtn.findViewById(R.id.add);
         final Button subtract = (Button) ctrlAmtBtn.findViewById(R.id.subtract);
+        final Button delete = (Button) ctrlAmtBtn.findViewById(R.id.delete);
 
         if(dbHandler.getCountIngredient(singleFoodItem) == 0){
             subtract.setEnabled(false);
@@ -103,6 +110,45 @@ public class GroceriesAdapter extends ArrayAdapter<String> {
 
                 Toast toast = Toast.makeText(context, text, duration);
                 toast.show();
+            }
+        });
+
+        delete.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View view) {
+                RelativeLayout parent = (RelativeLayout) view.getParent().getParent();
+                final TextView recipeName = (TextView) parent.findViewById(R.id.ingredientName);
+                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which){
+                            case DialogInterface.BUTTON_POSITIVE:
+                                dbHandler.deleteIngredient(recipeName.getTag().toString());
+                                ((Activity) getContext()).finish();
+                                ((Activity) getContext()).startActivity(new Intent(getContext(), GroceriesActivity.class));
+
+                                Context context = getContext().getApplicationContext();
+                                CharSequence text = "Deleted " + recipeName.getTag().toString();
+                                int duration = Toast.LENGTH_SHORT;
+
+                                Toast toast = Toast.makeText(context, text, duration);
+                                toast.show();
+
+                                break;
+
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                //No button clicked
+                                break;
+                        }
+                    }
+                };
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("Delete " + recipeName.getText().toString());
+                builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
+                        .setNegativeButton("No", dialogClickListener).show();
+
             }
         });
 
